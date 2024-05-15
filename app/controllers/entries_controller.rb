@@ -1,70 +1,33 @@
 class EntriesController < ApplicationController
 
-  def index
-    # find all Entry rows
-    @entries = Entry.all
-    
-  end
-  
   def show
-    # find an Entry
-    @entry = Entry.find_by({ "id" => params["id"] })
-    # find Contacts for the Company
-    @contacts = Contact.where({ "company_id" => @company["id"] })
-    # render companies/show view with details about Company
+    @entry = Entry.find_by({"id" => params["id"]})
+    @place = Place.find_by({"id" => @entry["company_id"]})
+    # render entry/show view with details about Place
   end
 
   def new
-    # render view with new Company form
+    @place = Place.find_by({ "id" => params["place_id"] })
+    # render entries/new view with new Entry form
   end
 
   def create
-    # start with a new Company
-    @company = Company.new
+    # start with a new Entry
+    @entry = Entry.new
 
-    # assign user-entered form data to Company's columns
-    @company["name"] = params["name"]
-    @company["city"] = params["city"]
-    @company["state"] = params["state"]
+    # assign user-entered form data to Contact's columns
+    @entry["title"] = params["title"]
+    @entry["posted_on"] = params["posted_on"]
+    @entry["description"] = params["description"]
 
-    # save Company row
-    @company.save
+    # assign relationship between Contact and Company
+    @entry["place_id"] = params["place_id"]
 
-    # redirect user
-    redirect_to "/companies"
-  end
-
-  def edit
-    # find a Company
-    @company = Company.find_by({ "id" => params["id"] })
-    # render view with edit Company form
-  end
-
-  def update
-    # find a Company
-    @company = Company.find_by({ "id" => params["id"] })
-
-    # assign user-entered form data to Company's columns
-    @company["name"] = params["name"]
-    @company["city"] = params["city"]
-    @company["state"] = params["state"]
-
-    # save Company row
-    @company.save
+    # save Contact row
+    @entry.save
 
     # redirect user
-    redirect_to "/companies"
-  end
-
-  def destroy
-    # find a Company
-    @company = Company.find_by({ "id" => params["id"] })
-
-    # destroy Company row
-    @company.destroy
-
-    # redirect user
-    redirect_to "/companies"
+    redirect_to "/places/#{@entry["place_id"]}"
   end
 
 end
